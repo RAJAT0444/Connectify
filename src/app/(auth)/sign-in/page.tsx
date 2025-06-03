@@ -353,33 +353,33 @@ export default function SignInPage() {
   });
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-  try {
-    const res = await signIn('credentials', {
-      redirect: false,
-      identifier: data.email,
-      password: data.password,
-    });
-
-    if (res?.error) {
-      toast.error('Invalid credentials', {
-        description: 'Please check your email and password',
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        identifier: data.email,
+        password: data.password,
       });
-      return;
-    }
 
-    if (res?.ok) {
-      toast.success('Welcome back!', {
-        description: 'You have successfully signed in',
+      if (res?.error) {
+        toast.error('Invalid credentials', {
+          description: 'Please check your email and password',
+        });
+        return;
+      }
+
+      if (res?.ok) {
+        toast.success('Welcome back!', {
+          description: 'You have successfully signed in',
+        });
+        router.replace('/dashboard');
+      }
+    } catch {
+      toast.error('An error occurred', {
+        description: 'Please try again later',
       });
-      router.replace('/dashboard');
     }
-  } catch (error) {
-    console.error('Unexpected error during sign-in:', error); // Log the error for debugging.
-    toast.error('An error occurred', {
-      description: 'Please try again later',
-    });
-  }
-};
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
