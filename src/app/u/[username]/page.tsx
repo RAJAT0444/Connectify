@@ -200,7 +200,7 @@ import { useForm } from 'react-hook-form';
 import { Loader2, Sparkles, Send, Copy, Check, Mail, User, ArrowRight, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { CardHeader, CardContent, Card } from '@/components/ui/card';
+// import { CardHeader, CardContent, Card } from '@/components/ui/card';
 import { useCompletion } from 'ai/react';
 import {
   Form,
@@ -217,6 +217,7 @@ import { ApiResponse } from '@/types/ApiResponse';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { MessageSchema } from '@/schemas/messageSchema';
+import { Message } from '@/model/User';
 
 const specialChar = '||';
 
@@ -268,23 +269,43 @@ export default function SendMessage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const onSubmit = async (data: z.infer<typeof MessageSchema>) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.post<ApiResponse<any>>('/api/send-message', {
-        ...data,
-        username,
-      });
+  // const onSubmit = async (data: z.infer<typeof MessageSchema>) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await axios.post<ApiResponse<any>>('/api/send-message', {
+  //       ...data,
+  //       username,
+  //     });
 
-      toast.success(response.data.message);
-      form.reset({ ...form.getValues(), content: '' });
-    } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse<any>>;
-      toast.error(axiosError.response?.data.message ?? 'Failed to send message');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     toast.success(response.data.message);
+  //     form.reset({ ...form.getValues(), content: '' });
+  //   } catch (error) {
+  //     const axiosError = error as AxiosError<ApiResponse<any>>;
+  //     toast.error(axiosError.response?.data.message ?? 'Failed to send message');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+  const onSubmit = async (data: z.infer<typeof MessageSchema>) => {
+  setIsLoading(true);
+  try {
+    const response = await axios.post<ApiResponse<Message>>('/api/send-message', {
+      ...data,
+      username,
+    });
+
+    toast.success(response.data.message);
+    form.reset({ ...form.getValues(), content: '' });
+  } catch (error) {
+    const axiosError = error as AxiosError<ApiResponse<Message>>;
+    toast.error(axiosError.response?.data.message ?? 'Failed to send message');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const fetchSuggestedMessages = async () => {
     try {

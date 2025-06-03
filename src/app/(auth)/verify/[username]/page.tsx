@@ -100,6 +100,7 @@ import * as z from 'zod';
 import { verifySchema } from '@/schemas/verifySchema';
 import { useEffect, useState } from 'react';
 import { ShieldCheck, ArrowLeft, Mail, RotateCw, Check } from 'lucide-react';
+import { Message } from '@/model/User';
 
 export default function VerifyAccount() {
   const router = useRouter();
@@ -132,7 +133,7 @@ export default function VerifyAccount() {
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
     setLoading(true);
     try {
-      const response = await axios.post<ApiResponse<any>>(`/api/verify-code`, {
+      const response = await axios.post<ApiResponse<Message>>(`/api/verify-code`, {
         username: params.username,
         code: data.code,
       });
@@ -143,7 +144,7 @@ export default function VerifyAccount() {
 
       router.replace('/sign-in');
     } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse<any>>;
+      const axiosError = error as AxiosError<ApiResponse<Message>>;
       toast.error(
         axiosError.response?.data.message ?? 'An error occurred. Please try again.',
         { icon: '❌' }
@@ -161,7 +162,7 @@ export default function VerifyAccount() {
       });
       toast.success('Verification code resent!');
     } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse<any>>;
+      const axiosError = error as AxiosError<ApiResponse<Message>>;
       toast.error(
         axiosError.response?.data.message ?? 'Failed to resend code. Please try again.'
       );
