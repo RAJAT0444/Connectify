@@ -90,6 +90,86 @@
 
 
 
+// import { NextResponse } from 'next/server';
+
+// export const runtime = 'edge';
+
+// // ✅ 100+ hardcoded suggested messages (sample 20 shown here for brevity)
+// const predefinedMessages: string[] = [
+//   "What’s a hobby you’ve recently started?",
+//   "If you could have dinner with any historical figure, who would it be?",
+//   "What’s a simple thing that makes you happy?",
+//   "What’s your favorite way to relax after a long day?",
+//   "If you could instantly learn any skill, what would it be?",
+//   "What’s a memorable trip you’ve taken and why?",
+//   "What’s a book or movie that changed your perspective?",
+//   "If you could live in any fictional world, which would it be?",
+//   "What’s a goal you’re currently working towards?",
+//   "What’s something new you tried recently and enjoyed?",
+//   "If you could only eat one meal for the rest of your life, what would it be?",
+//   "What’s one habit you’re proud of building?",
+//   "If you could master one instrument instantly, which one and why?",
+//   "What’s your favorite childhood memory?",
+//   "What’s something small that always makes your day better?",
+//   "If you had to teach a class on one thing, what would it be?",
+//   "What does your ideal weekend look like?",
+//   "If you could visit any time period, when would it be and why?",
+//   "What’s a fictional character you relate to and why?",
+//   "What motivates you when you're feeling low?"
+//   // 🔁 Add more here...
+// ];
+
+// // ✅ Utility to randomly select messages
+// function getRandomMessages(count = 3): string[] {
+//   const shuffled = [...predefinedMessages].sort(() => 0.5 - Math.random());
+//   return shuffled.slice(0, count);
+// }
+
+// // ✅ API Route Handler (POST only)
+// export async function POST(req: Request) {
+//   try {
+//     console.log('🎯 /api/suggest-messages hit');
+
+//     const messages = getRandomMessages(3);
+//     const result = messages.join('||');
+
+//     console.log('✅ Returning messages:', result);
+
+//     return NextResponse.json({ result }, { status: 200 });
+//   } catch (error) {
+//     console.error('❌ Error generating messages:', error);
+//     return NextResponse.json(
+//       { error: 'Failed to generate messages' },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+// // (Optional) Prevent GET requests if this route is POST-only
+// export async function GET() {
+//   return NextResponse.json(
+//     { error: 'GET not allowed. Use POST instead.' },
+//     { status: 405 }
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
@@ -116,7 +196,7 @@ const predefinedMessages: string[] = [
   "If you could visit any time period, when would it be and why?",
   "What’s a fictional character you relate to and why?",
   "What motivates you when you're feeling low?"
-  // 🔁 Add more here...
+  // 🔁 Add more messages here as needed
 ];
 
 // ✅ Utility to randomly select messages
@@ -125,8 +205,8 @@ function getRandomMessages(count = 3): string[] {
   return shuffled.slice(0, count);
 }
 
-// ✅ API Route Handler (POST only)
-export async function POST(req: Request) {
+// ✅ POST handler
+export async function POST(_req: Request) {
   try {
     console.log('🎯 /api/suggest-messages hit');
 
@@ -145,7 +225,7 @@ export async function POST(req: Request) {
   }
 }
 
-// (Optional) Prevent GET requests if this route is POST-only
+// ✅ GET handler (optional: block GET requests)
 export async function GET() {
   return NextResponse.json(
     { error: 'GET not allowed. Use POST instead.' },

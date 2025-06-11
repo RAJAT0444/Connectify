@@ -1,26 +1,15 @@
-
-
-
-
-// import { z } from "zod";
+// import { z } from 'zod'
 
 // export const signInSchema = z.object({
-//   email: z
-//     .string()
-//     .email("Invalid email address")
-//     .max(50, "Email must be at most 50 characters long"),
-//   password: z.string().min(8, "Password must be at least 8 characters long"),
+//   identifier: z.string(),
+//   password: z.string(),
 // });
 
 
-
-
-
-import * as z from 'zod';
+// @/schemas/signInSchema.ts
+import { z } from 'zod';
 
 export const signInSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  identifier: z.string().min(3, 'Enter a valid email or username'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
-
-
