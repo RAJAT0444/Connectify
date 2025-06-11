@@ -126,7 +126,7 @@ function getRandomMessages(count = 3): string[] {
 }
 
 // ✅ API Route Handler (POST only)
-export async function POST(_request: Request) {
+export async function POST(req: Request) {
   try {
     console.log('🎯 /api/suggest-messages hit');
 

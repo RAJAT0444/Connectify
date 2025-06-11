@@ -136,7 +136,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-// import axios from 'axios';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
@@ -153,7 +153,7 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 export default function SignUpPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -180,9 +180,8 @@ export default function SignUpPage() {
       // Simulate success
       toast.success('Account created! Please check your email to verify.');
       router.push(`/verify/${data.username}`);
-    } catch (error) {
-      const err = error as any;
-      toast.error(err?.response?.data?.message || 'Failed to create account. Try again.');
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to create account. Try again.');
     } finally {
       setIsSubmitting(false);
     }

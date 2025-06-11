@@ -28,7 +28,7 @@
     "lucide-react": "^0.511.0",
     "mongodb": "^6.16.0",
     "mongoose": "^8.14.2",
-    "next": "15.3.2",
+    "next": "^15.3.3",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
     "openai": "^4.104.0",
@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",
+    "@types/next": "^9.0.0",
     "@types/node": "^20.11.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
