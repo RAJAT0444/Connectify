@@ -528,7 +528,6 @@ import {
   Copy,
   Check,
   QrCode,
-  MessageSquare,
   Bell,
   BellOff,
   Trash2,
@@ -536,7 +535,7 @@ import {
   User as UserIcon,
   ChevronRight,
   ChevronLeft,
-  BarChart2
+  
 } from 'lucide-react';
 
 import { acceptMessageSchema } from '@/schemas/acceptMessageSchema';
