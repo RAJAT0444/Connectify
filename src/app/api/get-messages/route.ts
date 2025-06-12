@@ -73,7 +73,11 @@ import mongoose from 'mongoose';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/options';
 
+<<<<<<< HEAD
 export async function GET(request: Request) {
+=======
+export async function GET() {
+>>>>>>> aed1ac6 (Initial commit)
   try {
     // DB connect karo
     await dbConnect();
