@@ -206,11 +206,7 @@ function getRandomMessages(count = 3): string[] {
 }
 
 // ✅ POST handler
-<<<<<<< HEAD
-export async function POST(_req: Request) {
-=======
-export async function POST( ) {
->>>>>>> aed1ac6 (Initial commit)
+export async function POST() {
   try {
     console.log('🎯 /api/suggest-messages hit');
 
