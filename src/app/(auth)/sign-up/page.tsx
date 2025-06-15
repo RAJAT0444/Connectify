@@ -343,13 +343,21 @@ export default function SignUpPage() {
           toast.error(response.data.message || 'Failed to create account. Try again.');
         }
       } catch (error: unknown) {
-        if (
-          typeof error === 'object' &&
-          error !== null &&
-          'response' in error &&
-          typeof (error as any).response?.data?.message === 'string'
-        ) {
-          toast.error((error as any).response.data.message);
+        function isAxiosErrorWithMessage(
+          err: unknown
+        ): err is { response: { data: { message: string } } } {
+          return (
+            typeof err === 'object' &&
+            err !== null &&
+            'response' in err &&
+            typeof (err as Record<string, unknown>).response === 'object' &&
+            err.response !== null &&
+            typeof (err as any).response?.data?.message === 'string'
+          );
+        }
+
+        if (isAxiosErrorWithMessage(error)) {
+          toast.error(error.response.data.message);
         } else {
           toast.error('Failed to create account. Try again.');
         }
@@ -387,9 +395,7 @@ export default function SignUpPage() {
         [
           { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
           {
-            transform: `translateY(${Math.random() * 100 - 50}px) rotate(${
-              Math.random() * 360
-            }deg)`,
+            transform: `translateY(${Math.random() * 100 - 50}px) rotate(${Math.random() * 360}deg)`,
             opacity: 0.2,
           },
         ],

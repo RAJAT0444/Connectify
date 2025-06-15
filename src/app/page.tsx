@@ -1,4 +1,4 @@
-'use client';
+
 
 // The following block is commented out to avoid duplicate default exports and duplicate imports.
 // If you want to use this component, move it to a separate file (e.g., FeedbackPage.tsx).
