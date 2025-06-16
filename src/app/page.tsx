@@ -16,8 +16,8 @@ import {
 } from '@/components/ui/carousel';
 
 export default function Home() {
+  const [isScrolled, setIsScrolled] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
-  const [_, setIsScrolled] = useState(false); // Renamed to _ since it's not used
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,7 +54,7 @@ export default function Home() {
     {
       name: "Sarah Johnson",
       role: "Designer",
-      content: "The best messaging app I&apos;ve used. The interface is clean and intuitive.",
+      content: "The best messaging app I've used. The interface is clean and intuitive.",
       avatar: "/avatar1.svg"
     },
     {
@@ -81,7 +81,6 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white overflow-x-hidden">
       {/* Navigation */}
       
-
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -486,18 +485,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
