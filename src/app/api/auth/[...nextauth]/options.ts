@@ -245,40 +245,12 @@
 
 
 
-// <<<<<<< HEAD
-
-
-
-
-
-
-
-
-
-
-
-// =======
-// >>>>>>> aed1ac6 (Initial commit)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
+import { Document, Types } from 'mongoose';
 
 interface Credentials {
   identifier: string;
@@ -301,6 +273,16 @@ interface ExtendedSessionUser {
   image?: string | null;
 }
 
+// Interface for the Mongoose user document returned
+interface DBUser extends Document {
+  _id: Types.ObjectId;
+  username: string;
+  email: string;
+  password: string;
+  isVerified: boolean;
+  isAcceptingMessages?: boolean;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -315,12 +297,12 @@ export const authOptions: NextAuthOptions = {
 
         await dbConnect();
 
-        const user = await UserModel.findOne({
+        const user = (await UserModel.findOne({
           $or: [
             { email: credentials.identifier },
             { username: credentials.identifier },
           ],
-        });
+        })) as DBUser | null;
 
         if (!user) {
           throw new Error('No user found with this email or username');

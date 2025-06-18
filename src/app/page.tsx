@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/carousel';
 
 export default function Home() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [, setIsScrolled] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
 
   useEffect(() => {
