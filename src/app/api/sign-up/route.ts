@@ -244,48 +244,176 @@
 
 
 
-import { NextResponse } from "next/server";
-import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/model/User";
-import bcrypt from "bcryptjs";
-import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
+// import { NextResponse } from "next/server";
+// import dbConnect from "@/lib/dbConnect";
+// import UserModel from "@/model/User";
+// import bcrypt from "bcryptjs";
+// import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
+
+// export async function POST(request: Request) {
+//   try {
+//     await dbConnect();
+//     console.log("✅ Connected to DataBase");
+
+//     const body = await request.json();
+//     // console.log("📥 Request Body:", body);
+
+//     const { username, email, password } = body;
+
+//     // Validate input fields
+//     if (!username || !email || !password) {
+//       return NextResponse.json(
+//         { success: false, message: "All fields are required" },
+//         { status: 400 }
+//       );
+//     }
+
+//     // Validate email format
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     if (!emailRegex.test(email)) {
+//       return NextResponse.json(
+//         { success: false, message: "Invalid email format" },
+//         { status: 400 }
+//       );
+//     }
+
+//     // Validate password strength
+//     if (password.length < 6) {
+//       return NextResponse.json(
+//         { success: false, message: "Password must be at least 6 characters" },
+//         { status: 400 }
+//       );
+//     }
+
+//     // Check for existing verified user with same username
+//     const existingVerifiedUserByUsername = await UserModel.findOne({
+//       username,
+//       isVerified: true,
+//     });
+
+//     if (existingVerifiedUserByUsername) {
+//       return NextResponse.json(
+//         { success: false, message: "Username is already taken" },
+//         { status: 409 } // 409 Conflict is more appropriate for duplicate resources
+//       );
+//     }
+
+//     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+//     const hashedPassword = await bcrypt.hash(password, 12); // Increased salt rounds for better security
+
+//     const existingUserByEmail = await UserModel.findOne({ email });
+
+//     if (existingUserByEmail) {
+//       if (existingUserByEmail.isVerified) {
+//         return NextResponse.json(
+//           { success: false, message: "User already exists with this email" },
+//           { status: 409 }
+//         );
+//       } else {
+//         // Update existing unverified user
+//         existingUserByEmail.password = hashedPassword;
+//         existingUserByEmail.verifyCode = verifyCode;
+//         existingUserByEmail.verifyCodeExpire = new Date(Date.now() + 3600000);
+//         await existingUserByEmail.save();
+//         console.log("💾 Updated unverified user saved");
+//       }
+//     } else {
+//       // Create new user
+//       const newUser = new UserModel({
+//         username,
+//         email,
+//         password: hashedPassword,
+//         verifyCode,
+//         verifyCodeExpire: new Date(Date.now() + 3600000),
+//         isVerified: false,
+//         isAcceptingMessages: true,
+//         messages: [],
+//       });
+
+//       await newUser.save();
+//       console.log("💾 New user saved:", newUser._id);
+//     }
+
+//     // Send verification email
+//     const emailResponse = await sendVerificationEmail(
+//       email,
+//       username,
+//       verifyCode
+//     );
+
+//     if (!emailResponse.success) {
+//       return NextResponse.json(
+//         { 
+//           success: false, 
+//           message: emailResponse.message || "Failed to send verification email" 
+//         },
+//         { status: 500 }
+//       );
+//     }
+
+//     return NextResponse.json(
+//       {
+//         success: true,
+//         message: "User registered successfully. Please verify your account.",
+//       },
+//       { status: 201 }
+//     );
+//   } catch (error) {
+//     console.error("❌ Error in user registration:", error);
+//     return NextResponse.json(
+//       { 
+//         success: false, 
+//         message: error instanceof Error ? error.message : "An unexpected error occurred" 
+//       },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+
+
+
+import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/dbConnect';
+import UserModel from '@/model/User';
+import bcrypt from 'bcryptjs';
+import { sendVerificationEmail } from '@/helpers/sendVerificationEmail';
 
 export async function POST(request: Request) {
   try {
+    // Connect to MongoDB
     await dbConnect();
-    console.log("✅ Connected to DataBase");
+    console.log('✅ Connected to Database');
 
     const body = await request.json();
-    // console.log("📥 Request Body:", body);
-
     const { username, email, password } = body;
 
-    // Validate input fields
+    // Basic validation
     if (!username || !email || !password) {
       return NextResponse.json(
-        { success: false, message: "All fields are required" },
+        { success: false, message: 'All fields are required' },
         { status: 400 }
       );
     }
 
-    // Validate email format
+    // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { success: false, message: "Invalid email format" },
+        { success: false, message: 'Invalid email format' },
         { status: 400 }
       );
     }
 
-    // Validate password strength
+    // Password length validation
     if (password.length < 6) {
       return NextResponse.json(
-        { success: false, message: "Password must be at least 6 characters" },
+        { success: false, message: 'Password must be at least 6 characters long' },
         { status: 400 }
       );
     }
 
-    // Check for existing verified user with same username
+    // Check for existing verified user by username
     const existingVerifiedUserByUsername = await UserModel.findOne({
       username,
       isVerified: true,
@@ -293,30 +421,30 @@ export async function POST(request: Request) {
 
     if (existingVerifiedUserByUsername) {
       return NextResponse.json(
-        { success: false, message: "Username is already taken" },
-        { status: 409 } // 409 Conflict is more appropriate for duplicate resources
+        { success: false, message: 'Username is already taken' },
+        { status: 409 }
       );
     }
 
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashedPassword = await bcrypt.hash(password, 12); // Increased salt rounds for better security
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const existingUserByEmail = await UserModel.findOne({ email });
 
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
         return NextResponse.json(
-          { success: false, message: "User already exists with this email" },
+          { success: false, message: 'User already exists with this email' },
           { status: 409 }
         );
-      } else {
-        // Update existing unverified user
-        existingUserByEmail.password = hashedPassword;
-        existingUserByEmail.verifyCode = verifyCode;
-        existingUserByEmail.verifyCodeExpire = new Date(Date.now() + 3600000);
-        await existingUserByEmail.save();
-        console.log("💾 Updated unverified user saved");
       }
+
+      // Update unverified user
+      existingUserByEmail.password = hashedPassword;
+      existingUserByEmail.verifyCode = verifyCode;
+      existingUserByEmail.verifyCodeExpire = new Date(Date.now() + 3600000); // 1 hour
+      await existingUserByEmail.save();
+      console.log('🔁 Updated existing unverified user');
     } else {
       // Create new user
       const newUser = new UserModel({
@@ -324,28 +452,24 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         verifyCode,
-        verifyCodeExpire: new Date(Date.now() + 3600000),
+        verifyCodeExpire: new Date(Date.now() + 3600000), // 1 hour
         isVerified: false,
         isAcceptingMessages: true,
         messages: [],
       });
 
       await newUser.save();
-      console.log("💾 New user saved:", newUser._id);
+      console.log('🎉 New user saved:', newUser._id);
     }
 
-    // Send verification email
-    const emailResponse = await sendVerificationEmail(
-      email,
-      username,
-      verifyCode
-    );
+    // Send email
+    const emailResponse = await sendVerificationEmail(email, username, verifyCode);
 
     if (!emailResponse.success) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: emailResponse.message || "Failed to send verification email" 
+        {
+          success: false,
+          message: emailResponse.message || 'Failed to send verification email',
         },
         { status: 500 }
       );
@@ -354,16 +478,16 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: "User registered successfully. Please verify your account.",
+        message: 'User registered successfully. Please verify your account.',
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("❌ Error in user registration:", error);
+    console.error('❌ Error in user registration:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: error instanceof Error ? error.message : "An unexpected error occurred" 
+      {
+        success: false,
+        message: error instanceof Error ? error.message : 'Something went wrong',
       },
       { status: 500 }
     );
