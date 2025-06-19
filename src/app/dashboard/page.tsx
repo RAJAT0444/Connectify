@@ -509,9 +509,6 @@
 
 
 
-
-
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -535,7 +532,6 @@ import {
   User as UserIcon,
   ChevronRight,
   ChevronLeft,
-  
 } from 'lucide-react';
 
 import { acceptMessageSchema } from '@/schemas/acceptMessageSchema';
@@ -557,7 +553,7 @@ const UserDashboard = () => {
 
   const form = useForm<z.infer<typeof acceptMessageSchema>>({
     resolver: zodResolver(acceptMessageSchema),
-    defaultValues: { acceptMessage: false }
+    defaultValues: { acceptMessage: false },
   });
   const { watch, setValue } = form;
   const acceptMessages = watch('acceptMessage');
@@ -566,7 +562,7 @@ const UserDashboard = () => {
     setDeletingMessageId(messageId);
     try {
       await axios.delete<ApiResponse<{ message: string }>>(`/api/delete-message/${messageId}`);
-      setMessages(prev => prev.filter(m => m._id !== messageId));
+      setMessages((prev) => prev.filter((m) => m._id !== messageId));
       toast.success('Message deleted successfully');
     } catch (error: unknown) {
       const axiosError = error as AxiosError<ApiResponse<unknown>>;
@@ -616,7 +612,7 @@ const UserDashboard = () => {
   const handleSwitchChange = async () => {
     try {
       const response = await axios.post<ApiResponse<{ message: string }>>('/api/accept-messages', {
-        acceptMessage: !acceptMessages
+        acceptMessage: !acceptMessages,
       });
       setValue('acceptMessage', !acceptMessages);
       toast.success(response.data.message);
@@ -656,94 +652,129 @@ const UserDashboard = () => {
 
   const totalPages = Math.max(1, Math.ceil(messages.length / messagesPerPage));
   const currentMessages = messages.slice((currentPage - 1) * messagesPerPage, currentPage * messagesPerPage);
+  const username = (session.user as { username?: string }).username ?? '';
+  const usernameInitial = username[0]?.toUpperCase() ?? '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-white">
-      {/* Header & Profile */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl">Message Dashboard</h1>
-        <div className="flex items-center bg-gray-800 rounded px-4 py-2">
-          <span className="bg-blue-600 rounded-full px-2 py-1 mr-2">
-            {(session.user as { username?: string }).username?.[0].toUpperCase()}
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 p-6 text-white space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-4xl font-bold tracking-tight">📬 Message Dashboard</h1>
+        <div className="flex items-center bg-gray-700 rounded-full px-4 py-2 shadow-inner">
+          <span className="bg-blue-600 text-white font-semibold rounded-full w-8 h-8 flex items-center justify-center mr-2">
+            {usernameInitial}
           </span>
-          {(session.user as { username?: string }).username}
+          <span className="text-sm opacity-80">{username}</span>
         </div>
       </div>
 
-      {/* Profile Card */}
-      <div className="bg-gray-800/50 rounded-lg p-6 mb-6">
-        <h2 className="text-lg mb-2">Your Profile Link</h2>
+      <div className="bg-gray-800/70 rounded-2xl p-6 shadow-md space-y-3">
+        <h2 className="text-xl font-semibold mb-2">🔗 Your Profile Link</h2>
         <div className="relative">
-          <input value={profileUrl} readOnly className="w-full bg-gray-700 rounded px-4 py-2" />
-          <button onClick={() => setShowQR(!showQR)} className="absolute right-12 top-2"><QrCode /></button>
-          <button onClick={copyToClipboard} className="absolute right-2 top-2">
-            {copied ? <Check /> : <Copy />}
+          <input
+            value={profileUrl}
+            readOnly
+            className="w-full bg-gray-700 rounded-xl px-4 py-2 pr-20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
+          <button
+            onClick={() => setShowQR(!showQR)}
+            className="absolute right-16 top-2 text-white hover:text-blue-400 transition"
+          >
+            <QrCode size={20} />
+          </button>
+          <button
+            onClick={copyToClipboard}
+            className="absolute right-4 top-2 text-white hover:text-green-400 transition"
+          >
+            {copied ? <Check size={20} /> : <Copy size={20} />}
           </button>
         </div>
         {showQR && (
-          <div className="mt-4 bg-white p-3 rounded inline-block">
+          <div className="mt-4 animate-fade-in bg-white p-4 rounded-lg inline-block shadow-md">
             <QRCode value={profileUrl} />
           </div>
         )}
       </div>
 
-      {/* Settings */}
-      <div className="bg-gray-800/50 rounded-lg p-6 mb-6 flex items-center justify-between">
-        <div className="flex items-center">
-          {acceptMessages ? <Bell /> : <BellOff />}
-          <span className="ml-2">Accept Messages: {acceptMessages ? 'Yes' : 'No'}</span>
+      <div className="flex items-center justify-between bg-gray-800/70 p-5 rounded-2xl shadow-sm">
+        <div className="flex items-center gap-3 text-lg">
+          {acceptMessages ? <Bell className="text-green-400" /> : <BellOff className="text-red-400" />}
+          <span>Accepting Messages: <strong>{acceptMessages ? 'On' : 'Off'}</strong></span>
         </div>
-        <button disabled={isSwitchLoading} onClick={handleSwitchChange} className="px-4 py-2 bg-gray-700 rounded">
-          {isSwitchLoading ? <Loader2 className="animate-spin" /> : 'Toggle'}
+        <button
+          disabled={isSwitchLoading}
+          onClick={handleSwitchChange}
+          className={`flex items-center px-4 py-2 rounded-xl transition ${
+            acceptMessages ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+          }`}
+        >
+          {isSwitchLoading ? <Loader2 className="animate-spin mr-2" /> : null}
+          {acceptMessages ? 'Turn Off' : 'Turn On'}
         </button>
       </div>
 
-      {/* Stats & Refresh */}
-      <div className="bg-gray-800/50 rounded-lg p-6 mb-6 flex justify-between items-center">
+      <div className="bg-gray-800/70 rounded-2xl p-5 flex justify-between items-center shadow-sm">
         <div>
           <p>Total Messages: <strong>{messages.length}</strong></p>
-          <p>Pages: <strong>{totalPages}</strong></p>
+          <p>Total Pages: <strong>{totalPages}</strong></p>
         </div>
-        <button onClick={() => fetchMessages(true)} disabled={isLoading} className="px-4 py-2 bg-blue-600 rounded">
-          {isLoading ? <Loader2 className="animate-spin" /> : <><RefreshCcw /><span className="ml-2">Refresh</span></>}
+        <button
+          onClick={() => fetchMessages(true)}
+          disabled={isLoading}
+          className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition"
+        >
+          {isLoading ? <Loader2 className="animate-spin mr-2" /> : <RefreshCcw className="mr-2" />}
+          Refresh
         </button>
       </div>
 
-      {/* Message List */}
       <div className="grid md:grid-cols-2 gap-4">
-        {isLoading ? (
-          Array.from({ length: messagesPerPage }).map((_, i) => (
-            <div key={i} className="bg-gray-800/50 rounded p-4 animate-pulse h-32" />
-          ))
-        ) : currentMessages.length > 0 ? (
-          currentMessages.map(msg => (
-            <div key={String(msg._id)} className="bg-gray-800/50 rounded-lg p-4 relative">
-              <button
-                disabled={deletingMessageId === msg._id}
-                onClick={() => handleDeleteMessage(String(msg._id))}
-                className="absolute top-2 right-2"
+        {isLoading
+          ? Array.from({ length: messagesPerPage }).map((_, i) => (
+              <div key={i} className="bg-gray-700 rounded-xl p-6 animate-pulse h-32" />
+            ))
+          : currentMessages.length > 0
+          ? currentMessages.map((msg) => (
+              <div
+                key={String(msg._id)}
+                className="relative bg-gray-800/70 rounded-2xl p-5 shadow-md hover:shadow-lg transition"
               >
-                {deletingMessageId === msg._id ? <Loader2 className="animate-spin" /> : <Trash2 />}
-              </button>
-              <p className="mb-2">{msg.content}</p>
-              <span className="text-xs text-gray-400">
-                {new Date(msg.createdAt).toLocaleString()}
-              </span>
+                <button
+                  onClick={() => handleDeleteMessage(String(msg._id))}
+                  disabled={deletingMessageId === msg._id}
+                  className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition"
+                >
+                  {deletingMessageId === msg._id ? <Loader2 className="animate-spin" /> : <Trash2 />}
+                </button>
+                <p className="mb-3 text-sm text-gray-100">{msg.content}</p>
+                <span className="text-xs text-gray-400">
+                  {new Date(msg.createdAt).toLocaleString()}
+                </span>
+              </div>
+            ))
+          : (
+            <div className="col-span-full text-center text-gray-400">
+              <Mail className="mx-auto w-12 h-12 mb-2" />
+              <p>No messages yet. Start sharing your profile!</p>
             </div>
-          ))
-        ) : (
-          <div className="text-center col-span-full">
-            <Mail className="mx-auto text-gray-400 w-12 h-12" />
-            <p>No messages found.</p>
-          </div>
-        )}
+          )}
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center items-center mt-6 space-x-4">
-        <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}><ChevronLeft /></button>
-        <span>{currentPage} / {totalPages}</span>
-        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}><ChevronRight /></button>
+      <div className="flex justify-center items-center mt-6 gap-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="hover:text-blue-400 transition"
+        >
+          <ChevronLeft />
+        </button>
+        <span className="text-lg font-semibold">{currentPage} / {totalPages}</span>
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="hover:text-blue-400 transition"
+        >
+          <ChevronRight />
+        </button>
       </div>
     </div>
   );
