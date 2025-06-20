@@ -1,6 +1,6 @@
 'use client';
 import { Toaster } from 'sonner';
-import Navbar from '@/components/Navbar';
+// import Navbar from '@/components/Navbar';
 import AuthProvider from '@/context/AuthProvider';
 
 interface RootLayoutProps {
@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: RootLayoutProps) {
   return (
     <AuthProvider>
       <div className="flex flex-col min-h-screen">
-        <Navbar />
+ //       <Navbar />
         {children}
         <Toaster />
       </div>
