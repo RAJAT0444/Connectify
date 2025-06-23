@@ -56,7 +56,7 @@
 
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
-import { Message } from "@/model/User";
+// import { Message } from "@/model/User";
 import { isMessageClean } from "@/lib/filter"; // ✅ Add filter
 import { NextRequest } from "next/server";
 
