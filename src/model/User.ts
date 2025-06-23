@@ -81,19 +81,18 @@
 // export default UserModel;
 
 
-
 import mongoose, { Schema, Document } from "mongoose";
 
-// Message Interface
-export interface Message extends Document {
+// ✅ Message Interface
+export interface IMessage {
   content: string;
   createdAt: Date;
   ipAddress?: string;
   userAgent?: string;
 }
 
-// Message Schema
-const MessageSchema: Schema<Message> = new Schema({
+// ✅ Embedded message schema (not as model, just for subdocument)
+const MessageSchema = new Schema<IMessage>({
   content: {
     type: String,
     required: true,
@@ -113,8 +112,8 @@ const MessageSchema: Schema<Message> = new Schema({
   },
 });
 
-// User Interface
-export interface User extends Document {
+// ✅ User Interface
+export interface IUser extends Document {
   username: string;
   password: string;
   email: string;
@@ -122,12 +121,12 @@ export interface User extends Document {
   verifyCodeExpire: Date;
   isVerified: boolean;
   isAccountVerified: boolean;
-  messages: Message[];
+  messages: IMessage[];
   isAcceptingMessages: boolean;
 }
 
-// User Schema
-const UserSchema: Schema<User> = new Schema({
+// ✅ User Schema
+const UserSchema = new Schema<IUser>({
   username: {
     type: String,
     required: [true, "Username is required"],
@@ -163,16 +162,16 @@ const UserSchema: Schema<User> = new Schema({
     type: Boolean,
     default: false,
   },
-  messages: [MessageSchema],
+  messages: [MessageSchema], // ✅ now accepts plain object `{...}` push
   isAcceptingMessages: {
     type: Boolean,
     default: true,
   },
 });
 
-// User Model
+// ✅ User Model
 const UserModel =
-  (mongoose.models.User as mongoose.Model<User>) ||
-  mongoose.model<User>("User", UserSchema);
+  (mongoose.models.User as mongoose.Model<IUser>) ||
+  mongoose.model<IUser>("User", UserSchema);
 
 export default UserModel;
