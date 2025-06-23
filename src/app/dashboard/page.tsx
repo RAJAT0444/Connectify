@@ -505,10 +505,6 @@
 
 
 
-
-
-
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -519,6 +515,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import QRCode from 'react-qr-code';
+
 import {
   Loader2,
   RefreshCcw,
@@ -539,7 +536,7 @@ import { IMessage } from '@/model/User';
 import { ApiResponse } from '@/types/ApiResponse';
 
 const UserDashboard = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
   const [profileUrl, setProfileUrl] = useState('');
@@ -588,7 +585,7 @@ const UserDashboard = () => {
   const fetchMessages = useCallback(async (refresh = false) => {
     setIsLoading(true);
     try {
-      const response = await axios.get<ApiResponse<{ messages: Message[] }>>('/api/get-messages');
+      const response = await axios.get<ApiResponse<{ messages: IMessage[] }>>('/api/get-messages');
       setMessages(response.data.messages ?? []);
       if (refresh) toast.success('Showing latest messages');
     } catch (error: unknown) {
@@ -707,7 +704,7 @@ const UserDashboard = () => {
             acceptMessages ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
           }`}
         >
-          {isSwitchLoading ? <Loader2 className="animate-spin mr-2" /> : null}
+          {isSwitchLoading && <Loader2 className="animate-spin mr-2" />}
           {acceptMessages ? 'Turn Off' : 'Turn On'}
         </button>
       </div>
@@ -781,3 +778,4 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
+
