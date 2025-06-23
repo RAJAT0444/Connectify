@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
 // ✅ Message interface
 export interface IMessage extends Document {
@@ -20,11 +20,11 @@ const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
   },
   ipAddress: {
     type: String,
-    default: "unknown",
+    default: 'unknown',
   },
   userAgent: {
     type: String,
-    default: "unknown",
+    default: 'unknown',
   },
 });
 
@@ -45,22 +45,22 @@ export interface IUser extends Document {
 const UserSchema: Schema<IUser> = new Schema<IUser>({
   username: {
     type: String,
-    required: [true, "Username is required"],
+    required: [true, 'Username is required'],
     trim: true,
     unique: true,
   },
   email: {
     type: String,
-    required: [true, "Email is required"],
+    required: [true, 'Email is required'],
     unique: true,
     match: [
       /^([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+\.)+[a-zA-Z0-9]{2,4}$/,
-      "Please enter a valid email address",
+      'Please enter a valid email address',
     ],
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
+    required: [true, 'Password is required'],
   },
   verifyCode: {
     type: String,
@@ -90,6 +90,9 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
 
 // ✅ Final model
 const UserModel =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+  mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 
+// ✅ Export everything needed
+export { UserModel, MessageSchema };
 export default UserModel;
+export type { IMessage };
