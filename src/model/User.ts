@@ -95,4 +95,4 @@ const UserModel =
 // ✅ Export everything needed
 export { UserModel, MessageSchema };
 export default UserModel;
-export type { IMessage };
+
