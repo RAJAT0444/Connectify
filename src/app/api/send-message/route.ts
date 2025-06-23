@@ -53,11 +53,9 @@
 
 
 
-
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
-// import { Message } from "@/model/User";
-import { isMessageClean } from "@/lib/filter"; // ✅ Add filter
+import { isMessageClean } from "@/lib/filter";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -74,7 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ❌ Not accepting messages
+    // Reject if user not accepting messages
     if (!user.isAcceptingMessages) {
       return Response.json(
         { message: "User not accepting messages", success: false },
@@ -82,7 +80,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ❌ Filter: Bad words
+    // Check for inappropriate content
     if (!isMessageClean(content)) {
       return Response.json(
         { message: "Inappropriate message detected", success: false },
@@ -90,20 +88,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 🌐 Optional: Get IP and User-Agent (if needed for logging/audit)
+    // Optional: Get IP and User-Agent
     const ip = request.headers.get("x-forwarded-for") || "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
 
-    // ✅ Save message
-    const newMessage = {
-  content,
-  createdAt: new Date(),
-  ipAddress: ip,
-  userAgent,
-};
+    // Add message to user
+    user.messages.push({
+      content,
+      createdAt: new Date(),
+      ipAddress: ip,
+      userAgent,
+    });
 
-
-    user.messages.push(newMessage);
     await user.save();
 
     return Response.json(
