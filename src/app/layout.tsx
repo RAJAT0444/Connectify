@@ -6,6 +6,7 @@ import AuthProvider from '@/context/AuthProvider';
 import { Toaster } from 'sonner';
 import Navbar from '@/components/Navbar';
 import { usePathname } from 'next/navigation';
+import React from 'react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,7 +29,10 @@ export default function RootLayout({
   const hideNavbar = pathname?.startsWith('/u/');
 
   return (
-    <html lang="en" className={${geistSans.variable} ${geistMono.variable} antialiased}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
       <body>
         <AuthProvider>
           {!hideNavbar && <Navbar />}
