@@ -3,6 +3,17 @@ import UserModel from "@/model/User";
 import { isMessageClean } from "@/lib/filter";
 import { NextRequest } from "next/server";
 
+// Import Message type correctly from mongoose
+import mongoose from "mongoose";
+const MessageSchema = new mongoose.Schema({
+  content: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  ipAddress: { type: String, default: "unknown" },
+  userAgent: { type: String, default: "unknown" },
+});
+
+type MessageType = mongoose.InferSchemaType<typeof MessageSchema>;
+
 export async function POST(request: NextRequest) {
   await dbConnect();
 
@@ -18,7 +29,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Agar user message accept nahi kar raha
     if (!user.isAcceptingMessages) {
       return Response.json(
         { message: "User not accepting messages", success: false },
@@ -26,7 +36,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Message filter
     if (!isMessageClean(content)) {
       return Response.json(
         { message: "Inappropriate message detected", success: false },
@@ -34,18 +43,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // IP address & User-Agent le lo
     const ip = request.headers.get("x-forwarded-for") || "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
 
-    // Message push karo (as any cast kar ke)
-    user.messages.push({
+    const message: MessageType = {
       content,
       createdAt: new Date(),
       ipAddress: ip,
       userAgent,
-    } as any);
+    };
 
+    user.messages.push(message);
     await user.save();
 
     return Response.json(
