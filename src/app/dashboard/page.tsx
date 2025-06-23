@@ -535,7 +535,7 @@ import {
 } from 'lucide-react';
 
 import { acceptMessageSchema } from '@/schemas/acceptMessageSchema';
-import { IMessage } from '@/model/User';
+import { Message } from '@/model/User';
 import { ApiResponse } from '@/types/ApiResponse';
 
 const UserDashboard = () => {
