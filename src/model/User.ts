@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-// ✅ Rename to IMessage for clarity and export it
+// ✅ Message interface
 export interface IMessage extends Document {
   content: string;
   createdAt: Date;
@@ -8,15 +8,14 @@ export interface IMessage extends Document {
   userAgent?: string;
 }
 
-// Message Schema
-const MessageSchema: Schema<IMessage> = new Schema({
+// ✅ Message schema
+const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
   content: {
     type: String,
     required: true,
   },
   createdAt: {
     type: Date,
-    required: true,
     default: Date.now,
   },
   ipAddress: {
@@ -29,7 +28,7 @@ const MessageSchema: Schema<IMessage> = new Schema({
   },
 });
 
-// ✅ Rename to IUser and export if needed
+// ✅ User interface
 export interface IUser extends Document {
   username: string;
   password: string;
@@ -42,7 +41,8 @@ export interface IUser extends Document {
   isAcceptingMessages: boolean;
 }
 
-const UserSchema: Schema<IUser> = new Schema({
+// ✅ User schema
+const UserSchema: Schema<IUser> = new Schema<IUser>({
   username: {
     type: String,
     required: [true, "Username is required"],
@@ -64,11 +64,11 @@ const UserSchema: Schema<IUser> = new Schema({
   },
   verifyCode: {
     type: String,
-    required: [true, "Verification code is required"],
+    required: true,
   },
   verifyCodeExpire: {
     type: Date,
-    required: [true, "Verification code expiration date is required"],
+    required: true,
   },
   isVerified: {
     type: Boolean,
@@ -78,19 +78,18 @@ const UserSchema: Schema<IUser> = new Schema({
     type: Boolean,
     default: false,
   },
-  messages: [MessageSchema],
+  messages: {
+    type: [MessageSchema],
+    default: [],
+  },
   isAcceptingMessages: {
     type: Boolean,
     default: true,
   },
 });
 
-// ✅ Default export of model
+// ✅ Final model
 const UserModel =
-  (mongoose.models.User as mongoose.Model<IUser>) ||
-  mongoose.model<IUser>("User", UserSchema);
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
 
 export default UserModel;
-
-// ✅ Export the types correctly
-export type { IMessage };
