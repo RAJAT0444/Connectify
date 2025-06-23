@@ -1,20 +1,19 @@
 'use client';
 import { Toaster } from 'sonner';
-import Navbar from '@/components/Navbar';
+
 import AuthProvider from '@/context/AuthProvider';
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-
+// if you need to import Navbaar into dashboard to add but security purpose dont import 
 
 
 export default function DashboardLayout({ children }: RootLayoutProps) {
   return (
     <AuthProvider>
       <div className="flex flex-col min-h-screen">
-        <Navbar />
         {children}
         <Toaster />
       </div>
