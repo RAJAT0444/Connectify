@@ -95,12 +95,13 @@ export async function POST(request: NextRequest) {
     const userAgent = request.headers.get("user-agent") || "unknown";
 
     // ✅ Save message
-    const newMessage: Message = {
-      content,
-      createdAt: new Date(),
-      ipAddress: ip,
-      userAgent,
-    };
+    const newMessage = {
+  content,
+  createdAt: new Date(),
+  ipAddress: ip,
+  userAgent,
+};
+
 
     user.messages.push(newMessage);
     await user.save();
